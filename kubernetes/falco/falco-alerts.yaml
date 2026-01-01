@@ -1,0 +1,5 @@
+falcosidekick:
+  config:
+    webhook:
+      address: http://alert-receiver.monitoring.svc.cluster.local
+      minimumpriority: warning

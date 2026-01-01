@@ -1,0 +1,21 @@
+@"
+falcosidekick:
+  enabled: true
+  config:
+    azure:
+      eventHub:
+        namespace: evhns-k8project
+        name: falco-alerts
+        minimumPriority: ""
+
+driver:
+  kind: ebpf
+
+falco:
+  grpc:
+    enabled: true
+  grpcOutput:
+    enabled: true
+  jsonOutput: true
+  jsonIncludeOutputProperty: true
+"@ | Out-File -FilePath falco-values.yaml -Encoding UTF8

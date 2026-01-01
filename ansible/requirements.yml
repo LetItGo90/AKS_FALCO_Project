@@ -1,0 +1,6 @@
+﻿---
+collections:
+  - name: azure.azcollection
+    version: ">=1.15.0"
+  - name: kubernetes.core
+    version: ">=2.4.0"

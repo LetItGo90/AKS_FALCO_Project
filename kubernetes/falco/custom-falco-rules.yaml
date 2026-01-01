@@ -1,0 +1,54 @@
+customRules:
+  custom-rules.yaml: |-
+    - rule: Detect Crypto Mining
+      desc: Detect potential crypto mining activity
+      condition: spawned_process and proc.name in (xmrig, minerd, minergate, cryptonight)
+      output: "Crypto mining detected (user=%user.name command=%proc.cmdline container=%container.name)"
+      priority: CRITICAL
+      tags: [cryptomining]
+
+    - rule: Sensitive File Read in Container
+      desc: Detect reading of sensitive files
+      condition: >
+        open_read and container and 
+        fd.name in (/etc/shadow, /etc/sudoers, /root/.ssh/authorized_keys, /root/.bash_history)
+      output: "Sensitive file read (file=%fd.name user=%user.name container=%container.name pod=%k8s.pod.name)"
+      priority: WARNING
+      tags: [filesystem]
+
+    - rule: Reverse Shell Detected
+      desc: Detect potential reverse shell
+      condition: >
+        spawned_process and container and 
+        ((proc.name = bash and proc.cmdline contains "/dev/tcp") or
+        (proc.name = nc and proc.args contains "-e") or
+        (proc.name = ncat and proc.args contains "-e"))
+      output: "Reverse shell detected (user=%user.name command=%proc.cmdline container=%container.name pod=%k8s.pod.name)"
+      priority: CRITICAL
+      tags: [reverseshell]
+
+    - rule: Package Manager in Container
+      desc: Detect package installation in running container
+      condition: >
+        spawned_process and container and 
+        proc.name in (apt, apt-get, yum, dnf, apk, pip, npm)
+      output: "Package manager run in container (command=%proc.cmdline container=%container.name pod=%k8s.pod.name)"
+      priority: WARNING
+      tags: [package_management]
+
+    - rule: Kubectl Exec to Pod
+      desc: Detect kubectl exec into any pod
+      condition: >
+        spawned_process and container and 
+        proc.tty != 0 and container.image.repository != ""
+      output: "Interactive exec to container (user=%user.name command=%proc.cmdline container=%container.name pod=%k8s.pod.name namespace=%k8s.ns.name)"
+      priority: NOTICE
+      tags: [exec]
+
+    - rule: Shell Activity in Container
+      desc: notice shell activity within a container
+      condition: >
+        spawned_process and container and proc.name = bash
+      output: "shell in a container user=%user.name container_id=%container.id container_name=%container.name shell=%proc.name parent=%proc.pname cmdline=%proc.cmdline "
+      priority: WARNING
+      tags: [exec]
