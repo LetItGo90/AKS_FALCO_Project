@@ -1,6 +1,3 @@
-powershell
-
-@"
 # 🛡️ Kubernetes Threat Detection Lab
 
 Real-time security monitoring for Kubernetes using **Falco** and **Azure Log Analytics**. This project demonstrates how to detect and alert on suspicious container behavior in a production-like environment.
